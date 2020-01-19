@@ -130,7 +130,7 @@ public:
         {
             case 1:
                 nodePathIndices[0] = 0;
-                nodePathIndices[1] = 3;
+                nodePathIndices[1] = 4;
                 nodePathIndices[2] = 7;
                 break;
             case 2:
