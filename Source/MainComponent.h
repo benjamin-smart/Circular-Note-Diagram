@@ -6,7 +6,13 @@
 /*
  todo:
  synth voice for each node
- generate midi?
+ 
+ MIDI:
+ - array of notes in scale to iterate through patterns
+ - duplicate up octaves
+ SYNTH:
+ - plays currently selected sequence of notes
+ 
  make nodes light up when they are playing
  sync with external source / incoming midi - play sequences into your sessions & songs
  
@@ -123,7 +129,16 @@ public:
     }
     
     //==============================================================================
-
+/*
+ if (notePathIndices[0] == 0 || notePathIndices[1] == 0 || notePathIndices[2] == 0)
+    // play C
+ if (notePathIndices[0] == 1 || notePathIndices[1] == 1 || notePathIndices[2] == 1)
+    // play C#
+ if (notePathIndices[0] == 1 || notePathIndices[1] == 1 || notePathIndices[2] == 1)
+ 
+ */
+    
+    
     void setNotePath(int newPath)
     {
         switch (newPath) // chord numbers 1-7 become note indices 0-11 here
@@ -240,7 +255,7 @@ private:
     std::array<float, 12> noteNodeXValues = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // absolute location of nodes
     std::array<float, 12> noteNodeYValues = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // absolute location of nodes
     std::array<Point<float>, 12> nodePoints; // point objects used to draw paths
-    std::array<int, 3> nodePathIndices    = {0, 4, 9}; // index 0 to 11 of which nodes to draw lines between
+    std::array<int, 3> nodePathIndices    = {0, 4, 7}; // index 0 to 11 of which nodes to draw lines between
 //    std::array<Path, 7>   scalePaths      = { } // preallocated array of paths?
     
     
