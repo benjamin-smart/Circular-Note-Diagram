@@ -1,8 +1,8 @@
 /*
  todo:
  
- - make paths generate from selected scale/mode (based on isDiatonic boolean in each node we can skip through a predetermined sequence to find our path points, for example the first third and fifth nodes that isDiatonic is true for will give us a root position triad.  This will work with our update mode and parent scale functions. 
- - restructure nodeComponent
+
+ - add button to nodeComponent to change root that scale is generated from
  - parent scales enums
  MIDI:
  - array of notes in scale to iterate through patterns
@@ -28,6 +28,7 @@
  
  
  done:
+- make paths generate from selected scale/mode
  - create scale concept
  - refactor circle display into it's own cpp file
 

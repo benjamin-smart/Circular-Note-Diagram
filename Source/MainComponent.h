@@ -1,6 +1,5 @@
 #pragma once
 #include "../JuceLibraryCode/JuceHeader.h"
-
 #include "CircleDiagramComponent.h"
 
 //==============================================================================
@@ -12,10 +11,12 @@ public:
     MainComponent()
     {
         setSize (1200, 1200);
+        circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::ionian);
         
         addAndMakeVisible(circleDiagram);
         addAndMakeVisible(distanceFromCentreSlider);
         addAndMakeVisible(rotateNodesSlider);
+        
         addAndMakeVisible(chordButton1);
         addAndMakeVisible(chordButton2);
         addAndMakeVisible(chordButton3);
@@ -24,10 +25,18 @@ public:
         addAndMakeVisible(chordButton6);
         addAndMakeVisible(chordButton7);
         
+        addAndMakeVisible(modeButton1);
+        addAndMakeVisible(modeButton2);
+        addAndMakeVisible(modeButton3);
+        addAndMakeVisible(modeButton4);
+        addAndMakeVisible(modeButton5);
+        addAndMakeVisible(modeButton6);
+        addAndMakeVisible(modeButton7);
+        
         distanceFromCentreSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
         distanceFromCentreSlider.setRange(0.4f, 0.9f);
         distanceFromCentreSlider.setValue(0.9f);
-        distanceFromCentreSlider.onValueChange = [this]{ setCircleDiagramDistanceFromCentre(circleDiagram, (float)distanceFromCentreSlider.getValue()); };
+        distanceFromCentreSlider.onValueChange = [this]{ circleDiagram.setDistanceFromCentre((float)distanceFromCentreSlider.getValue()); };
         distanceFromCentreSlider.setNumDecimalPlacesToDisplay(2);
         
         rotateNodesSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
@@ -57,7 +66,28 @@ public:
         chordButton5.onClick = [this] { chordButton5.setToggleState(true, dontSendNotification); circleDiagram.setNodePath(5); };
         chordButton6.onClick = [this] { chordButton6.setToggleState(true, dontSendNotification); circleDiagram.setNodePath(6); };
         chordButton7.onClick = [this] { chordButton7.setToggleState(true, dontSendNotification); circleDiagram.setNodePath(7); };
-
+        
+        modeButton1.setRadioGroupId(2);
+        modeButton2.setRadioGroupId(2);
+        modeButton3.setRadioGroupId(2);
+        modeButton4.setRadioGroupId(2);
+        modeButton5.setRadioGroupId(2);
+        modeButton6.setRadioGroupId(2);
+        modeButton7.setRadioGroupId(2);
+        modeButton1.setToggleState(true,  dontSendNotification);
+        modeButton2.setToggleState(false, dontSendNotification);
+        modeButton3.setToggleState(false, dontSendNotification);
+        modeButton4.setToggleState(false, dontSendNotification);
+        modeButton5.setToggleState(false, dontSendNotification);
+        modeButton6.setToggleState(false, dontSendNotification);
+        modeButton7.setToggleState(false, dontSendNotification);
+        modeButton1.onClick = [this] { modeButton1.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::ionian); };
+        modeButton2.onClick = [this] { modeButton2.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::dorian); };
+        modeButton3.onClick = [this] { modeButton3.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::phrygian); };
+        modeButton4.onClick = [this] { modeButton4.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::lydian); };
+        modeButton5.onClick = [this] { modeButton5.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::mixolydian); };
+        modeButton6.onClick = [this] { modeButton6.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::aeolian); };
+        modeButton7.onClick = [this] { modeButton7.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::locrian); };
     }
 
     ~MainComponent() { shutdownAudio(); }
@@ -67,7 +97,7 @@ public:
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override { bufferToFill.clearActiveBufferRegion(); }
     void releaseResources()                                             override {}
 
-    //==============================================================================
+//==============================================================================
     void paint (Graphics& g) override {}
 
     void resized() override
@@ -87,9 +117,20 @@ public:
         chordButtonsFlexBox.items.add(FlexItem(80, 80, chordButton7));
         chordButtonsFlexBox.justifyContent = FlexBox::JustifyContent::spaceBetween;
         chordButtonsFlexBox.performLayout(chordButtonsBounds);
+        
+        Rectangle<int> modeButtonsBounds = Rectangle<int>(110, 10, 980, 80);
+        FlexBox modeButtonsFlexBox;
+        modeButtonsFlexBox.items.add(FlexItem(80, 80, modeButton1));
+        modeButtonsFlexBox.items.add(FlexItem(80, 80, modeButton2));
+        modeButtonsFlexBox.items.add(FlexItem(80, 80, modeButton3));
+        modeButtonsFlexBox.items.add(FlexItem(80, 80, modeButton4));
+        modeButtonsFlexBox.items.add(FlexItem(80, 80, modeButton5));
+        modeButtonsFlexBox.items.add(FlexItem(80, 80, modeButton6));
+        modeButtonsFlexBox.items.add(FlexItem(80, 80, modeButton7));
+        modeButtonsFlexBox.justifyContent = FlexBox::JustifyContent::spaceBetween;
+        modeButtonsFlexBox.performLayout(modeButtonsBounds);
     }
-    
-    //==============================================================================
+//==============================================================================
 
 private:
     void setCircleDiagramDistanceFromCentre(CircleDiagramComponent& circleDiagramToSet, float valueToSet)
@@ -111,6 +152,15 @@ private:
     TextButton chordButton5 {"V"};
     TextButton chordButton6 {"vi"};
     TextButton chordButton7 {"vii"};
+    
+    
+    TextButton modeButton1 {"ionian"};
+    TextButton modeButton2 {"dorian"};
+    TextButton modeButton3 {"phrygian"};
+    TextButton modeButton4 {"lydian"};
+    TextButton modeButton5 {"mixolydian"};
+    TextButton modeButton6 {"aeolian"};
+    TextButton modeButton7 {"locrian"};
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
