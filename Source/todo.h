@@ -2,8 +2,9 @@
  todo:
  
  REFACTOR:
-= - add synth cpp
+ - make paths generate from selected scale/mode
  - restructure nodeComponent
+ - parent scales enums
  MIDI:
  - array of notes in scale to iterate through patterns
  - duplicate up octaves
@@ -28,6 +29,7 @@
  
  
  done:
+ - create scale concept, 
  - refactor circle display into it's own cpp file
 
  path generator

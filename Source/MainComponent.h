@@ -57,6 +57,7 @@ public:
         chordButton5.onClick = [this] { chordButton5.setToggleState(true, dontSendNotification); circleDiagram.setNodePath(5); };
         chordButton6.onClick = [this] { chordButton6.setToggleState(true, dontSendNotification); circleDiagram.setNodePath(6); };
         chordButton7.onClick = [this] { chordButton7.setToggleState(true, dontSendNotification); circleDiagram.setNodePath(7); };
+
     }
 
     ~MainComponent() { shutdownAudio(); }

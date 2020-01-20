@@ -4,7 +4,7 @@
 //#include "CircleDiagramComponent.h"
 #include <array>
 
-// - changed all variable names "note" that should have been "node" (and noteNode -> node etc).  Node is the spot of the circle.  Note is the musical note.
+// why is the root note selection circle slightly misaligned on the right side of the diagram?
 
 class NodeComponent : public Component
 {
@@ -12,20 +12,29 @@ public:
     NodeComponent()
     {
         addAndMakeVisible(noteNameLabel);
+//        addAndMakeVisible(nodeButton);
         noteNameLabel.setColour(0x1000281, Colours::black);
+//        noteNameLabel.setFont(Font::)
     }
     
     void paint (Graphics& g) override
     {
         g.setColour(Colours::wheat);
-        Rectangle<float> nodeRect = getLocalBounds().toFloat().reduced(5);
+        Rectangle<float> nodeRect = getLocalBounds().toFloat().reduced(5.0f);
         g.fillEllipse(nodeRect);
+        
+        if (isDiatonic)
+        {
+            Rectangle<float> diatonicIndicatorArea = getLocalBounds().toFloat().expanded(5.0f, 5.0f);
+            g.setColour(Colours::lightblue);
+            g.drawEllipse(diatonicIndicatorArea, 2.0f);
+        }
     }
     
     void resized () override
     {
         noteNameLabel.setBounds(10, 5, getWidth()-5, getHeight()-5);
-        nodeCentre.setXY((float)((getWidth()-1) /2), (float)((getHeight()-1)/2));
+//        nodeCentre.setXY((float)((getWidth()-1) /2), (float)((getHeight()-1)/2));
     }
     
     void setText(const String& newText)
@@ -33,10 +42,14 @@ public:
         noteNameLabel.setText(newText, dontSendNotification);
     }
     
+    
+    bool isDiatonic = false;
+
 private:
     Label noteNameLabel;
     String noteNameString;
-    Point<float> nodeCentre;
+//    Point<float> nodeCentre;
+//    ShapeButton nodeButton;
 };
 
 
@@ -75,19 +88,22 @@ public:
         addAndMakeVisible(centreNode);
         setNodePath(1);
         
+        setNodesDiatonicToMode();
+        
     }
     
     void paint(Graphics& g) override
     {
-        
-        // draw circle and centre
         g.fillAll(Colours::black);
+
+        // draw circle and centre
         g.setColour(Colours::white);
         g.drawEllipse((getLocalBounds().toFloat()).reduced(50), 2);
         g.drawEllipse((float)(centrePoint.getX()-5), (float)(centrePoint.getY()-5), 9, 9, 1);
         
         
         // make and fill path
+        g.setColour(Colours::darkgrey);
         Point<float> rootPoint  = nodePoints[nodePathIndices[0]];
         Point<float> thirdPoint = nodePoints[nodePathIndices[1]];
         Point<float> fifthPoint = nodePoints[nodePathIndices[2]];
@@ -98,12 +114,17 @@ public:
         g.fillPath(nodePath);
         
         // draw circles around path points
-        g.setColour(Colours::red);
+        g.setColour(Colours::lightgrey);
         g.drawEllipse(rootPoint.getX()-25, rootPoint.getY()-25, 50.0f, 50.0f, 4.0f);
-        g.setColour(Colours::maroon);
-        g.drawEllipse(thirdPoint.getX()-25, thirdPoint.getY()-25, 50.0f, 50.0f, 4.0f);
-        g.setColour(Colours::purple);
-        g.drawEllipse(fifthPoint.getX()-25, fifthPoint.getY()-25, 50.0f, 50.0f, 4.0f);
+//        g.setColour(Colours::maroon);
+        g.drawEllipse(thirdPoint.getX()-25, thirdPoint.getY()-25, 50.0f, 50.0f, 1.0f);
+//        g.setColour(Colours::purple);
+        g.drawEllipse(fifthPoint.getX()-25, fifthPoint.getY()-25, 50.0f, 50.0f, 1.0f);
+    }
+    
+    void makeDiatonicMajor ()
+    {
+        
     }
     
     void resized() override
@@ -127,8 +148,17 @@ public:
     //==============================================================================
 
     
-    void setNodePath(int newPath)
+    void setNodePath(int newPath)  // this is just hard-coded to find paths for diatonic major triads - i need to change this to use isDiatonic to generate a path based on what scale we're in.   to get a root position triad, we need every other node that "isDiatonic" - only the first three, then we shove that in here.  ternary operators?
     {
+//        unsigned int diatonicIndices[7];  // maybe we can make an array of the valid indices for our current mode, then put those into hardcoded note sequences in the switch statement below
+//        for (int i = 0; i < 7; ++i)
+//        {
+//            if (currentMode == MelodicMajorModes::ionian)
+//            {
+//
+//            }
+//        }
+        
         switch (newPath) // chord numbers 1-7 become node indices 0-11 here
         {
             case 1:
@@ -238,13 +268,163 @@ public:
         initializeNodes(radius);
     }
     
+    void setNodesDiatonicToMode() // let me know if you have a better way to do this...
+    {
+        if (currentMode == MelodicMajorModes::ionian)
+        {
+            node1. isDiatonic = true;
+            node2. isDiatonic = false;
+            node3. isDiatonic = true;
+            node4. isDiatonic = false;
+            node5. isDiatonic = true;
+            node6. isDiatonic = true;
+            node7. isDiatonic = false;
+            node8. isDiatonic = true;
+            node9. isDiatonic = false;
+            node10.isDiatonic = true;
+            node11.isDiatonic = false;
+            node12.isDiatonic = true;
+        }
+        else if (currentMode == MelodicMajorModes::dorian)
+        {
+            node1. isDiatonic = true;
+            node2. isDiatonic = false;
+            node3. isDiatonic = true;
+            node4. isDiatonic = true;
+            node5. isDiatonic = false;
+            node6. isDiatonic = true;
+            node7. isDiatonic = false;
+            node8. isDiatonic = true;
+            node9. isDiatonic = false;
+            node10.isDiatonic = true;
+            node11.isDiatonic = true;
+            node12.isDiatonic = false;
+        }
+        else if (currentMode == MelodicMajorModes::phrygian)
+        {
+            node1. isDiatonic = true;
+            node2. isDiatonic = true;
+            node3. isDiatonic = false;
+            node4. isDiatonic = true;
+            node5. isDiatonic = false;
+            node6. isDiatonic = true;
+            node7. isDiatonic = false;
+            node8. isDiatonic = true;
+            node9. isDiatonic = true;
+            node10.isDiatonic = false;
+            node11.isDiatonic = true;
+            node12.isDiatonic = false;
+        }
+        else if (currentMode == MelodicMajorModes::lydian)
+        {
+            node1. isDiatonic = true;
+            node2. isDiatonic = false;
+            node3. isDiatonic = true;
+            node4. isDiatonic = false;
+            node5. isDiatonic = true;
+            node6. isDiatonic = false;
+            node7. isDiatonic = true;
+            node8. isDiatonic = true;
+            node9. isDiatonic = false;
+            node10.isDiatonic = true;
+            node11.isDiatonic = false;
+            node12.isDiatonic = true;
+        }
+        else if (currentMode == MelodicMajorModes::mixolydian)
+        {
+            node1. isDiatonic = true;
+            node2. isDiatonic = false;
+            node3. isDiatonic = true;
+            node4. isDiatonic = false;
+            node5. isDiatonic = true;
+            node6. isDiatonic = true;
+            node7. isDiatonic = false;
+            node8. isDiatonic = true;
+            node9. isDiatonic = false;
+            node10.isDiatonic = true;
+            node11.isDiatonic = true;
+            node12.isDiatonic = false;
+        }
+        else if (currentMode == MelodicMajorModes::aeolian)
+        {
+            node1. isDiatonic = true;
+            node2. isDiatonic = false;
+            node3. isDiatonic = true;
+            node4. isDiatonic = true;
+            node5. isDiatonic = false;
+            node6. isDiatonic = true;
+            node7. isDiatonic = false;
+            node8. isDiatonic = true;
+            node9. isDiatonic = true;
+            node10.isDiatonic = false;
+            node11.isDiatonic = true;
+            node12.isDiatonic = false;
+        }
+        else if (currentMode == MelodicMajorModes::locrian)
+        {
+            node1. isDiatonic = true;
+            node2. isDiatonic = true;
+            node3. isDiatonic = false;
+            node4. isDiatonic = true;
+            node5. isDiatonic = false;
+            node6. isDiatonic = true;
+            node7. isDiatonic = true;
+            node8. isDiatonic = false;
+            node9. isDiatonic = true;
+            node10.isDiatonic = false;
+            node11.isDiatonic = true;
+            node12.isDiatonic = false;
+        }
+    }
+    
+    
 public:
+    enum class MelodicMajorModes
+    {
+        ionian,
+        dorian,
+        phrygian,
+        lydian,
+        mixolydian,
+        aeolian,
+        locrian
+    };
+    
+    /*
+     // broooooo
+     enum class ParentScales2K
+     {
+        melodicMajor,
+        melodicMinor,
+        harmonicMajor,
+        harmonicMinor,
+        hungarianMajor,
+        melodicFlatFive,
+     };
+     enum class ParentScales3K
+     {
+         hungarianMinor,
+         poorvi,
+         todi,
+         maarva,
+         bluessy,
+         neapolitan minor,
+         malini,
+     };
+     enum class ParentScales4K
+     {
+        enigmaticMinor,
+        enigmaticDescendant,
+        enigmaticAscendant,
+        lydianSharp3Flat6
+     };
+     */
+    
     float radius;
     float distanceFromCentre = 0.9f;;
     float currentPlacementAngle = MathConstants<float>::halfPi + MathConstants<float>::pi;
     static constexpr int numberOfNodes = 12;
     
-    Point<int> centrePoint;
     
 private:
     
@@ -254,10 +434,12 @@ private:
     std::array<float, 12> nodeYValues = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // absolute location of nodes
     std::array<Point<float>, 12> nodePoints; // point objects used to draw paths
     std::array<int, 3> nodePathIndices    = {0, 4, 7}; // index 0 to 11 of which nodes to draw lines between
-//    std::array<Path, 7>   scalePaths      = { } // preallocated array of paths?
+    Point<int> centrePoint;
+
+    //    std::array<Path, 7>   scalePaths      = { } // preallocated array of paths?
     
     
-    
+    MelodicMajorModes currentMode { MelodicMajorModes::ionian };
     
 //    ==============================================================================
     NodeComponent centreNode;
