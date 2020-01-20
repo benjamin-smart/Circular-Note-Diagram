@@ -29,7 +29,7 @@
  
  
  done:
- - create scale concept, 
+ - create scale concept
  - refactor circle display into it's own cpp file
 
  path generator
