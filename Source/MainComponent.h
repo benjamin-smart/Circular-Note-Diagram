@@ -1,6 +1,7 @@
 #pragma once
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "CircleDiagramComponent.h"
+#include "SynthSectionComponent.h"
 
 //==============================================================================
 
@@ -11,11 +12,15 @@ public:
     MainComponent()
     {
         setSize (1600, 1200);
+        setAudioChannels(0, 2);
+        
+        
         circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::ionian);
         
         addAndMakeVisible(circleDiagram);
         addAndMakeVisible(distanceFromCentreSlider);
         addAndMakeVisible(rotateNodesSlider);
+        addAndMakeVisible(synthSection);
         
         addAndMakeVisible(chordButton1);
         addAndMakeVisible(chordButton2);
@@ -33,12 +38,6 @@ public:
         addAndMakeVisible(modeButton6);
         addAndMakeVisible(modeButton7);
         
-        addAndMakeVisible(synthSectionDummyLabel);
-        synthSectionDummyLabel.setText("Synth Section", dontSendNotification);
-        synthSectionDummyLabel.setJustificationType(Justification::centred);
-        synthSectionDummyLabel.setColour(0x1000280, Colours::darkgrey);  // background colour ID
-        synthSectionDummyLabel.setColour(0x1000281, Colours::lightgrey); // text colour ID
-        synthSectionDummyLabel.setColour(0x1000282, Colours::maroon);    // outline colour ID
         
         addAndMakeVisible(playbackSectionDummyLabel);
         playbackSectionDummyLabel.setText("Playback Section", dontSendNotification);
@@ -46,7 +45,6 @@ public:
         playbackSectionDummyLabel.setColour(0x1000280, Colours::darkgrey);  // background colour ID
         playbackSectionDummyLabel.setColour(0x1000281, Colours::lightgrey); // text colour ID
         playbackSectionDummyLabel.setColour(0x1000282, Colours::maroon);    // outline colour ID
-        
         
         distanceFromCentreSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
         distanceFromCentreSlider.setRange(0.4f, 0.9f);
@@ -108,9 +106,19 @@ public:
     ~MainComponent() { shutdownAudio(); }
 
     //==============================================================================
-    void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override {}
-    void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override { bufferToFill.clearActiveBufferRegion(); }
-    void releaseResources()                                             override {}
+    void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override
+    {
+        synthAudioSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
+    }
+    void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
+    {
+        bufferToFill.clearActiveBufferRegion();
+        synthAudioSource.getNextAudioBlock(bufferToFill);
+    }
+    void releaseResources()                                             override
+    {
+        
+    }
 
 //==============================================================================
     void paint (Graphics& g) override {}
@@ -144,30 +152,20 @@ public:
         modeButtonsFlexBox.items.add(FlexItem(80, 80, modeButton7));
         modeButtonsFlexBox.justifyContent = FlexBox::JustifyContent::spaceBetween;
         modeButtonsFlexBox.performLayout(modeButtonsBounds);
-        
-//        synthSectionDummyLabel.setBounds(10, 10, 380, 580);
-//
+
         Rectangle<int> synthSectionBounds    = Rectangle<int>(10, 10,  380, 580);
         FlexBox synthSectionFlexBox;
-        synthSectionFlexBox.items.add(FlexItem(380, 580, synthSectionDummyLabel));
+        synthSectionFlexBox.items.add(FlexItem(380, 580, synthSection));
         synthSectionFlexBox.performLayout(synthSectionBounds);
-//
+
         Rectangle<int> playbackSectionBounds = Rectangle<int>(10, 610, 380, 580);
         FlexBox playbackSectionFlexBox;
         playbackSectionFlexBox.items.add(FlexItem(380, 580, playbackSectionDummyLabel));
         playbackSectionFlexBox.performLayout(playbackSectionBounds);
         
     }
-//==============================================================================
-
-private:
-    void setCircleDiagramDistanceFromCentre(CircleDiagramComponent& circleDiagramToSet, float valueToSet)
-    {
-        circleDiagramToSet.setDistanceFromCentre(valueToSet);
-    }
     
-    //==============================================================================
-
+//==============================================================================
     CircleDiagramComponent circleDiagram;
     
     Slider distanceFromCentreSlider;
@@ -189,7 +187,8 @@ private:
     TextButton modeButton6 {"aeolian"};
     TextButton modeButton7 {"locrian"};
     
-    Label synthSectionDummyLabel;
+    SynthSectionComponent synthSection;
+    SynthAudioSource      synthAudioSource;
     Label playbackSectionDummyLabel;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)

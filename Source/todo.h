@@ -2,8 +2,10 @@
  todo:
  
  - synth section
+    - 3 separate synths for root third and fifth?
  - midi / playback section
- - add button to nodeComponent to change root that scale is generated from
+ - scales start from other notes?
+     - add button to nodeComponent to change root that scale is generated from
  - parent scales enums
  MIDI:
  - array of notes in scale to iterate through patterns
