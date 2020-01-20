@@ -19,7 +19,8 @@ public:
     
     void paint (Graphics& g) override
     {
-        g.setColour(Colours::wheat);
+//        g.setColour(Colours::wheat);
+        g.setColour(isDiatonic ? Colours::wheat : Colours::darkgrey);
         Rectangle<float> nodeRect = getLocalBounds().toFloat().reduced(5.0f);
         g.fillEllipse(nodeRect);
         
