@@ -1,7 +1,8 @@
 /*
  todo:
  
-
+ - synth section
+ - midi / playback section
  - add button to nodeComponent to change root that scale is generated from
  - parent scales enums
  MIDI:
@@ -24,8 +25,7 @@
  GUI:
  - fretboard display (more frets, full pattern completion and adjust pattern start point)
  - make clicking on notes move to that note of the scale
- 
- 
+  
  
  done:
 - make paths generate from selected scale/mode
@@ -38,3 +38,49 @@
  array of paths to represent different chords
  way of representing intervallic structure of scales
  */
+
+
+
+// why is the root note selection circle slightly misaligned on the right side of the diagram?
+
+    //==============================================================================
+/*
+ // possible way of making sound for active nodes
+ if (nodePathIndices[0] == 0 || nodePathIndices[1] == 0 || nodePathIndices[2] == 0)
+    // play C
+ if (nodePathIndices[0] == 1 || nodePathIndices[1] == 1 || nodePathIndices[2] == 1)
+    // play C#
+ if (nodePathIndices[0] == 1 || nodePathIndices[1] == 1 || nodePathIndices[2] == 1)
+ 
+ */
+//=============================================================================
+
+
+/*
+enum class ParentScales2K
+{
+   melodicMajor,
+   melodicMinor,
+   harmonicMajor,
+   harmonicMinor,
+   hungarianMajor,
+   melodicFlatFive,
+};
+enum class ParentScales3K
+{
+    hungarianMinor,
+    poorvi,
+    todi,
+    maarva,
+    bluessy,
+    neapolitan minor,
+    malini,
+};
+enum class ParentScales4K
+{
+   enigmaticMinor,
+   enigmaticDescendant,
+   enigmaticAscendant,
+   lydianSharp3Flat6
+};
+*/

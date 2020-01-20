@@ -10,7 +10,7 @@ public:
     //==============================================================================
     MainComponent()
     {
-        setSize (1200, 1200);
+        setSize (1600, 1200);
         circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::ionian);
         
         addAndMakeVisible(circleDiagram);
@@ -32,6 +32,21 @@ public:
         addAndMakeVisible(modeButton5);
         addAndMakeVisible(modeButton6);
         addAndMakeVisible(modeButton7);
+        
+        addAndMakeVisible(synthSectionDummyLabel);
+        synthSectionDummyLabel.setText("Synth Section", dontSendNotification);
+        synthSectionDummyLabel.setJustificationType(Justification::centred);
+        synthSectionDummyLabel.setColour(0x1000280, Colours::darkgrey);  // background colour ID
+        synthSectionDummyLabel.setColour(0x1000281, Colours::lightgrey); // text colour ID
+        synthSectionDummyLabel.setColour(0x1000282, Colours::maroon);    // outline colour ID
+        
+        addAndMakeVisible(playbackSectionDummyLabel);
+        playbackSectionDummyLabel.setText("Playback Section", dontSendNotification);
+        playbackSectionDummyLabel.setJustificationType(Justification::centred);
+        playbackSectionDummyLabel.setColour(0x1000280, Colours::darkgrey);  // background colour ID
+        playbackSectionDummyLabel.setColour(0x1000281, Colours::lightgrey); // text colour ID
+        playbackSectionDummyLabel.setColour(0x1000282, Colours::maroon);    // outline colour ID
+        
         
         distanceFromCentreSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
         distanceFromCentreSlider.setRange(0.4f, 0.9f);
@@ -102,11 +117,11 @@ public:
 
     void resized() override
     {
-        circleDiagram.setBounds           (100,  100, 1000, 1000);
-        distanceFromCentreSlider.setBounds(10,   10,  80,   1180);
-        rotateNodesSlider.setBounds       (1110, 10,  80,   1180);
+        circleDiagram.setBounds           (410,   100, 1000, 1000);
+        distanceFromCentreSlider.setBounds(1420, 10,  80,   1180);
+        rotateNodesSlider.setBounds       (1510, 10,  80,   1180);
         
-        Rectangle<int> chordButtonsBounds = Rectangle<int>(110, 1110, 980, 80);
+        Rectangle<int> chordButtonsBounds = Rectangle<int>(410, 1110, 980, 80);
         FlexBox chordButtonsFlexBox;
         chordButtonsFlexBox.items.add(FlexItem(80, 80, chordButton1));
         chordButtonsFlexBox.items.add(FlexItem(80, 80, chordButton2));
@@ -118,7 +133,7 @@ public:
         chordButtonsFlexBox.justifyContent = FlexBox::JustifyContent::spaceBetween;
         chordButtonsFlexBox.performLayout(chordButtonsBounds);
         
-        Rectangle<int> modeButtonsBounds = Rectangle<int>(110, 10, 980, 80);
+        Rectangle<int> modeButtonsBounds = Rectangle<int>(410, 10, 980, 80);
         FlexBox modeButtonsFlexBox;
         modeButtonsFlexBox.items.add(FlexItem(80, 80, modeButton1));
         modeButtonsFlexBox.items.add(FlexItem(80, 80, modeButton2));
@@ -129,6 +144,19 @@ public:
         modeButtonsFlexBox.items.add(FlexItem(80, 80, modeButton7));
         modeButtonsFlexBox.justifyContent = FlexBox::JustifyContent::spaceBetween;
         modeButtonsFlexBox.performLayout(modeButtonsBounds);
+        
+//        synthSectionDummyLabel.setBounds(10, 10, 380, 580);
+//
+        Rectangle<int> synthSectionBounds    = Rectangle<int>(10, 10,  380, 580);
+        FlexBox synthSectionFlexBox;
+        synthSectionFlexBox.items.add(FlexItem(380, 580, synthSectionDummyLabel));
+        synthSectionFlexBox.performLayout(synthSectionBounds);
+//
+        Rectangle<int> playbackSectionBounds = Rectangle<int>(10, 610, 380, 580);
+        FlexBox playbackSectionFlexBox;
+        playbackSectionFlexBox.items.add(FlexItem(380, 580, playbackSectionDummyLabel));
+        playbackSectionFlexBox.performLayout(playbackSectionBounds);
+        
     }
 //==============================================================================
 
@@ -153,7 +181,6 @@ private:
     TextButton chordButton6 {"vi"};
     TextButton chordButton7 {"vii"};
     
-    
     TextButton modeButton1 {"ionian"};
     TextButton modeButton2 {"dorian"};
     TextButton modeButton3 {"phrygian"};
@@ -161,6 +188,9 @@ private:
     TextButton modeButton5 {"mixolydian"};
     TextButton modeButton6 {"aeolian"};
     TextButton modeButton7 {"locrian"};
+    
+    Label synthSectionDummyLabel;
+    Label playbackSectionDummyLabel;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
