@@ -3,32 +3,12 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <array>
 
-/*
- todo:
- synth voice for each node
- 
- MIDI:
- - array of notes in scale to iterate through patterns
- - duplicate up octaves
- SYNTH:
- - plays currently selected sequence of notes
- 
- make nodes light up when they are playing
- sync with external source / incoming midi - play sequences into your sessions & songs
- 
- 
- done:
- path generator
- 7 diatonic chord buttons in flexbox at bottom that generate paths
-    - combobox selection menu to choose parent scale
- array of paths to represent different chords
- way of representing intervallic structure of scales
- */
+// - changed all variable names "note" that should have been "node" (and noteNode -> node etc).  Node is the spot of the circle.  Note is the musical note.
 
-class NoteNodeComponent : public Component
+class NodeComponent : public Component
 {
 public:
-    NoteNodeComponent()
+    NodeComponent()
     {
         addAndMakeVisible(noteNameLabel);
         noteNameLabel.setColour(0x1000281, Colours::black);
@@ -44,7 +24,7 @@ public:
     void resized () override
     {
         noteNameLabel.setBounds(10, 5, getWidth()-5, getHeight()-5);
-        noteNodeCentre.setXY((float)((getWidth()-1) /2), (float)((getHeight()-1)/2));
+        nodeCentre.setXY((float)((getWidth()-1) /2), (float)((getHeight()-1)/2));
     }
     
     void setText(const String& newText)
@@ -55,7 +35,7 @@ public:
 private:
     Label noteNameLabel;
     String noteNameString;
-    Point<float> noteNodeCentre;
+    Point<float> nodeCentre;
 };
 
 
@@ -66,33 +46,33 @@ public:
 
     CircleDiagramComponent ()
     {
-        noteNode1. setText(" C");
-        noteNode2. setText("C#");
-        noteNode3. setText(" D");
-        noteNode4. setText("D#");
-        noteNode5. setText(" E");
-        noteNode6. setText(" F");
-        noteNode7. setText("F#");
-        noteNode8. setText(" G");
-        noteNode9. setText("G#");
-        noteNode10.setText(" A");
-        noteNode11.setText("A#");
-        noteNode12.setText(" B");
+        node1. setText(" C");
+        node2. setText("C#");
+        node3. setText(" D");
+        node4. setText("D#");
+        node5. setText(" E");
+        node6. setText(" F");
+        node7. setText("F#");
+        node8. setText(" G");
+        node9. setText("G#");
+        node10.setText(" A");
+        node11.setText("A#");
+        node12.setText(" B");
         
-        addAndMakeVisible(noteNode1);
-        addAndMakeVisible(noteNode2);
-        addAndMakeVisible(noteNode3);
-        addAndMakeVisible(noteNode4);
-        addAndMakeVisible(noteNode5);
-        addAndMakeVisible(noteNode6);
-        addAndMakeVisible(noteNode7);
-        addAndMakeVisible(noteNode8);
-        addAndMakeVisible(noteNode9);
-        addAndMakeVisible(noteNode10);
-        addAndMakeVisible(noteNode11);
-        addAndMakeVisible(noteNode12);
+        addAndMakeVisible(node1);
+        addAndMakeVisible(node2);
+        addAndMakeVisible(node3);
+        addAndMakeVisible(node4);
+        addAndMakeVisible(node5);
+        addAndMakeVisible(node6);
+        addAndMakeVisible(node7);
+        addAndMakeVisible(node8);
+        addAndMakeVisible(node9);
+        addAndMakeVisible(node10);
+        addAndMakeVisible(node11);
+        addAndMakeVisible(node12);
         addAndMakeVisible(centreNode);
-        setNotePath(1);
+        setNodePath(1);
         
     }
     
@@ -106,11 +86,11 @@ public:
         Point<float> rootPoint  = nodePoints[nodePathIndices[0]];
         Point<float> thirdPoint = nodePoints[nodePathIndices[1]];
         Point<float> fifthPoint = nodePoints[nodePathIndices[2]];
-        Path notePath;
-        notePath.addTriangle(rootPoint, thirdPoint, fifthPoint);
-        g.strokePath(notePath, PathStrokeType(1.5f));
+        Path nodePath;
+        nodePath.addTriangle(rootPoint, thirdPoint, fifthPoint);
+        g.strokePath(nodePath, PathStrokeType(1.5f));
         g.setOpacity(0.5f);
-        g.fillPath(notePath);
+        g.fillPath(nodePath);
         
         g.setColour(Colours::red);
         g.drawEllipse(rootPoint.getX()-25, rootPoint.getY()-25, 50.0f, 50.0f, 4.0f);
@@ -130,18 +110,19 @@ public:
     
     //==============================================================================
 /*
- if (notePathIndices[0] == 0 || notePathIndices[1] == 0 || notePathIndices[2] == 0)
+ // i forget what I meant by this but I think its important...
+ if (nodePathIndices[0] == 0 || nodePathIndices[1] == 0 || nodePathIndices[2] == 0)
     // play C
- if (notePathIndices[0] == 1 || notePathIndices[1] == 1 || notePathIndices[2] == 1)
+ if (nodePathIndices[0] == 1 || nodePathIndices[1] == 1 || nodePathIndices[2] == 1)
     // play C#
- if (notePathIndices[0] == 1 || notePathIndices[1] == 1 || notePathIndices[2] == 1)
+ if (nodePathIndices[0] == 1 || nodePathIndices[1] == 1 || nodePathIndices[2] == 1)
  
  */
     
     
-    void setNotePath(int newPath)
+    void setNodePath(int newPath)
     {
-        switch (newPath) // chord numbers 1-7 become note indices 0-11 here
+        switch (newPath) // chord numbers 1-7 become node indices 0-11 here
         {
             case 1:
                 nodePathIndices[0] = 0;
@@ -185,11 +166,11 @@ public:
 
     void initializeNodes(float radius)
     {
-        notePlacementAngleDelta = MathConstants<float>::twoPi / (float) numberOfNodes;
-//        float currentPlacementAngle = MathConstants<float>::halfPi + MathConstants<float>::pi;
+        nodePlacementAngleDelta = MathConstants<float>::twoPi / (float) numberOfNodes;
+//        float currentPlacementAngle = MathConstants<float>::halfPi + MathConstants<float>::pi; // (moved to member variable for rotate slider)
         
         String initializeNodesText = String("currentPlacementAngle:") + String(currentPlacementAngle) + newLine +
-                                            "notePlacementAngleDelta:" + String(notePlacementAngleDelta) + newLine;;
+                                            "nodePlacementAngleDelta:" + String(nodePlacementAngleDelta) + newLine;;
         DBG(initializeNodesText);
 
         
@@ -200,8 +181,8 @@ public:
             float sineOfAngle = std::sin(currentPlacementAngle);
             float currentX = (cosineOfAngle * radius * distanceFromCentre) + radius;
             float currentY = (sineOfAngle   * radius * distanceFromCentre) + radius;
-            noteNodeXValues[i] = currentX;
-            noteNodeYValues[i] = currentY;
+            nodeXValues[i] = currentX;
+            nodeYValues[i] = currentY;
 
             Point<float> currentPoint (currentX, currentY);
             nodePoints[i] = currentPoint;
@@ -215,21 +196,21 @@ public:
                         "currentY:"              + String((int)currentY) + newLine;
             DBG(findNodesText);
             
-            currentPlacementAngle += notePlacementAngleDelta;
+            currentPlacementAngle += nodePlacementAngleDelta;
         }
     
-        noteNode1 .setBounds(noteNodeXValues[0]  - 25, noteNodeYValues[0]  - 25, 50, 50);
-        noteNode2 .setBounds(noteNodeXValues[1]  - 25, noteNodeYValues[1]  - 25, 50, 50);
-        noteNode3 .setBounds(noteNodeXValues[2]  - 25, noteNodeYValues[2]  - 25, 50, 50);
-        noteNode4 .setBounds(noteNodeXValues[3]  - 25, noteNodeYValues[3]  - 25, 50, 50);
-        noteNode5 .setBounds(noteNodeXValues[4]  - 25, noteNodeYValues[4]  - 25, 50, 50);
-        noteNode6 .setBounds(noteNodeXValues[5]  - 25, noteNodeYValues[5]  - 25, 50, 50);
-        noteNode7 .setBounds(noteNodeXValues[6]  - 25, noteNodeYValues[6]  - 25, 50, 50);
-        noteNode8 .setBounds(noteNodeXValues[7]  - 25, noteNodeYValues[7]  - 25, 50, 50);
-        noteNode9 .setBounds(noteNodeXValues[8]  - 25, noteNodeYValues[8]  - 25, 50, 50);
-        noteNode10.setBounds(noteNodeXValues[9]  - 25, noteNodeYValues[9]  - 25, 50, 50);
-        noteNode11.setBounds(noteNodeXValues[10] - 25, noteNodeYValues[10] - 25, 50, 50);
-        noteNode12.setBounds(noteNodeXValues[11] - 25, noteNodeYValues[11] - 25, 50, 50);
+        node1 .setBounds(nodeXValues[0]  - 25, nodeYValues[0]  - 25, 50, 50);
+        node2 .setBounds(nodeXValues[1]  - 25, nodeYValues[1]  - 25, 50, 50);
+        node3 .setBounds(nodeXValues[2]  - 25, nodeYValues[2]  - 25, 50, 50);
+        node4 .setBounds(nodeXValues[3]  - 25, nodeYValues[3]  - 25, 50, 50);
+        node5 .setBounds(nodeXValues[4]  - 25, nodeYValues[4]  - 25, 50, 50);
+        node6 .setBounds(nodeXValues[5]  - 25, nodeYValues[5]  - 25, 50, 50);
+        node7 .setBounds(nodeXValues[6]  - 25, nodeYValues[6]  - 25, 50, 50);
+        node8 .setBounds(nodeXValues[7]  - 25, nodeYValues[7]  - 25, 50, 50);
+        node9 .setBounds(nodeXValues[8]  - 25, nodeYValues[8]  - 25, 50, 50);
+        node10.setBounds(nodeXValues[9]  - 25, nodeYValues[9]  - 25, 50, 50);
+        node11.setBounds(nodeXValues[10] - 25, nodeYValues[10] - 25, 50, 50);
+        node12.setBounds(nodeXValues[11] - 25, nodeYValues[11] - 25, 50, 50);
         centreNode.setBounds(radius - 5, radius - 5, 10, 10);
         repaint();
     }
@@ -250,10 +231,10 @@ public:
     
 private:
     
-    double notePlacementAngleDelta; // in radians, used to find placement of nodes around circle
+    double nodePlacementAngleDelta; // in radians, used to find placement of nodes around circle
     
-    std::array<float, 12> noteNodeXValues = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // absolute location of nodes
-    std::array<float, 12> noteNodeYValues = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // absolute location of nodes
+    std::array<float, 12> nodeXValues = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // absolute location of nodes
+    std::array<float, 12> nodeYValues = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // absolute location of nodes
     std::array<Point<float>, 12> nodePoints; // point objects used to draw paths
     std::array<int, 3> nodePathIndices    = {0, 4, 7}; // index 0 to 11 of which nodes to draw lines between
 //    std::array<Path, 7>   scalePaths      = { } // preallocated array of paths?
@@ -262,19 +243,19 @@ private:
     
     
 //    ==============================================================================
-    NoteNodeComponent centreNode;
-    NoteNodeComponent noteNode1;
-    NoteNodeComponent noteNode2;
-    NoteNodeComponent noteNode3;
-    NoteNodeComponent noteNode4;
-    NoteNodeComponent noteNode5;
-    NoteNodeComponent noteNode6;
-    NoteNodeComponent noteNode7;
-    NoteNodeComponent noteNode8;
-    NoteNodeComponent noteNode9;
-    NoteNodeComponent noteNode10;
-    NoteNodeComponent noteNode11;
-    NoteNodeComponent noteNode12;
+    NodeComponent centreNode;
+    NodeComponent node1;
+    NodeComponent node2;
+    NodeComponent node3;
+    NodeComponent node4;
+    NodeComponent node5;
+    NodeComponent node6;
+    NodeComponent node7;
+    NodeComponent node8;
+    NodeComponent node9;
+    NodeComponent node10;
+    NodeComponent node11;
+    NodeComponent node12;
 };
 
 //==============================================================================
@@ -319,19 +300,19 @@ public:
         
         
         chordButton1.onClick = [this] { chordButton1.setToggleState(true, dontSendNotification);
-                                        circleDiagram.setNotePath(1); };
+                                        circleDiagram.setNodePath(1); };
         chordButton2.onClick = [this] { chordButton2.setToggleState(true, dontSendNotification);
-                                        circleDiagram.setNotePath(2); };
+                                        circleDiagram.setNodePath(2); };
         chordButton3.onClick = [this] { chordButton3.setToggleState(true, dontSendNotification);
-                                        circleDiagram.setNotePath(3); };
+                                        circleDiagram.setNodePath(3); };
         chordButton4.onClick = [this] { chordButton4.setToggleState(true, dontSendNotification);
-                                        circleDiagram.setNotePath(4); };
+                                        circleDiagram.setNodePath(4); };
         chordButton5.onClick = [this] { chordButton5.setToggleState(true, dontSendNotification);
-                                        circleDiagram.setNotePath(5); };
+                                        circleDiagram.setNodePath(5); };
         chordButton6.onClick = [this] { chordButton6.setToggleState(true, dontSendNotification);
-                                        circleDiagram.setNotePath(6); };
+                                        circleDiagram.setNodePath(6); };
         chordButton7.onClick = [this] { chordButton7.setToggleState(true, dontSendNotification);
-                                        circleDiagram.setNotePath(7); };
+                                        circleDiagram.setNodePath(7); };
         
 
         distanceFromCentreSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
