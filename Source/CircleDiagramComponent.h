@@ -1,3 +1,13 @@
+/*
+  ==============================================================================
+
+    CircleDiagramComponent.h
+    Created: 20 Jan 2020 3:38:04pm
+    Author:  Benjamin Smart
+
+  ==============================================================================
+*/
+
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
