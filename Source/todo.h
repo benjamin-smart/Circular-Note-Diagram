@@ -2,8 +2,7 @@
  todo:
  
  REFACTOR:
- - refactor circle display into it's own cpp file
- - add synth cpp
+= - add synth cpp
  - restructure nodeComponent
  MIDI:
  - array of notes in scale to iterate through patterns
@@ -29,6 +28,8 @@
  
  
  done:
+ - refactor circle display into it's own cpp file
+
  path generator
  7 diatonic chord buttons in flexbox at bottom that generate paths
     - combobox selection menu to choose parent scale

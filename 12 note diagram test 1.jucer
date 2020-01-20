@@ -5,11 +5,9 @@
               companyEmail="ben.e.smart@gmail.com" companyCopyright="Benjamin Smart 2020">
   <MAINGROUP id="vd27mG" name="Circular Note Diagram">
     <GROUP id="{E788438C-7F3B-FD34-EADD-832B355AF184}" name="Source">
+      <FILE id="RZ1kZe" name="CircleDiagramComponent.h" compile="0" resource="0"
+            file="Source/CircleDiagramComponent.h"/>
       <FILE id="mJKlvj" name="todo.h" compile="0" resource="0" file="Source/todo.h"/>
-      <FILE id="ICv8fX" name="CircularNoteDiagram.cpp" compile="1" resource="0"
-            file="Source/CircularNoteDiagram.cpp"/>
-      <FILE id="VUMmPC" name="CircularNoteDiagram.h" compile="0" resource="0"
-            file="Source/CircularNoteDiagram.h"/>
       <FILE id="psIgFE" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="iLwPVM" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>
