@@ -27,7 +27,7 @@ public:
         {
             Rectangle<float> diatonicIndicatorArea = getLocalBounds().toFloat().expanded(5.0f, 5.0f);
             g.setColour(Colours::lightblue);
-            g.drawEllipse(diatonicIndicatorArea, 2.0f);
+            g.drawEllipse(diatonicIndicatorArea, 1.5f);
         }
     }
     
@@ -391,7 +391,7 @@ public:
     };
     
     /*
-     // broooooo
+     
      enum class ParentScales2K
      {
         melodicMajor,
