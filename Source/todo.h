@@ -1,8 +1,7 @@
 /*
  todo:
  
- REFACTOR:
- - make paths generate from selected scale/mode
+ - make paths generate from selected scale/mode (based on isDiatonic boolean in each node we can skip through a predetermined sequence to find our path points, for example the first third and fifth nodes that isDiatonic is true for will give us a root position triad.  This will work with our update mode and parent scale functions. 
  - restructure nodeComponent
  - parent scales enums
  MIDI:
