@@ -10,8 +10,6 @@
 
 #pragma once
 #include "../JuceLibraryCode/JuceHeader.h"
-//#include <array>
-
 
 //==============================================================================
 class WavetableOscillator
@@ -168,7 +166,6 @@ public:
         }
     }
     
-    
     void updateSynthMidiNoteState(MelodicMajorModes currentMode, int currentChord)
     {
         switch (currentMode)
@@ -199,7 +196,15 @@ public:
     }
     
 //==============================================================================
-public:
+private:
+    const unsigned int tableSize = 1 << 7; // 128
+    AudioSampleBuffer sineTable;
+    OwnedArray<WavetableOscillator> oscillators;
+    double synthSampleRate;
+    float level;
+
+    int midiNote = 48;
+
     const std::array<int, 7> ionianMidiNotes      = { 48, 50, 52, 53, 55, 57, 59 }; // can i put this all somewhere else...?
     const std::array<int, 7> dorianMidiNotes      = { 48, 50, 51, 53, 55, 57, 58 };
     const std::array<int, 7> phrygianMidiNotes    = { 48, 49, 51, 53, 55, 56, 58 };
@@ -207,22 +212,7 @@ public:
     const std::array<int, 7> mixolydianMidiNotes  = { 48, 50, 52, 53, 55, 57, 58 };
     const std::array<int, 7> aeolianMidiNotes     = { 48, 50, 51, 53, 55, 56, 58 };
     const std::array<int, 7> locrianMidiNotes     = { 48, 49, 51, 53, 54, 56, 58 };
-
-
-private:
-    const unsigned int tableSize = 1 << 7; // 128
-    AudioSampleBuffer sineTable;
-    OwnedArray<WavetableOscillator> oscillators;
-    double synthSampleRate;
-    float level;
-    
-    int midiNote = 48;
-    
-//==============================================================================
-
 };
-
-
 
 
 //==============================================================================

@@ -123,6 +123,8 @@ public:
         modeState = requestedMode;
         circleDiagram.setNodesDiatonicToMode(modeState);
         synthAudioSource.updateSynthMidiNoteState(modeState, chordState);
+        updateChordButtonText();
+
     }
     
     void chordButtonClicked(int chordNumber) // 1-7, diatonic to current mode
@@ -131,6 +133,78 @@ public:
         circleDiagram.setNodePath(chordNumber);
         synthAudioSource.updateSynthMidiNoteState(modeState, chordState);
     }
+    
+    void updateChordButtonText()
+    {
+        switch (modeState)
+        {
+            case (MelodicMajorModes::ionian):
+                chordButton1.setButtonText("I");
+                chordButton2.setButtonText("ii");
+                chordButton3.setButtonText("iii");
+                chordButton4.setButtonText("IV");
+                chordButton5.setButtonText("V");
+                chordButton6.setButtonText("vi");
+                chordButton7.setButtonText("vii");
+                break;
+            case (MelodicMajorModes::dorian):
+                chordButton1.setButtonText("i");
+                chordButton2.setButtonText("ii");
+                chordButton3.setButtonText("bIII");
+                chordButton4.setButtonText("IV");
+                chordButton5.setButtonText("v");
+                chordButton6.setButtonText("vi");
+                chordButton7.setButtonText("bVII");
+                break;
+            case (MelodicMajorModes::phrygian):
+                chordButton1.setButtonText("i");
+                chordButton2.setButtonText("bII");
+                chordButton3.setButtonText("BIII");
+                chordButton4.setButtonText("iv");
+                chordButton5.setButtonText("v0");
+                chordButton6.setButtonText("bVI");
+                chordButton7.setButtonText("bvii");
+                break;
+            case (MelodicMajorModes::lydian):
+                chordButton1.setButtonText("I");
+                chordButton2.setButtonText("II");
+                chordButton3.setButtonText("iii");
+                chordButton4.setButtonText("#iv");
+                chordButton5.setButtonText("V");
+                chordButton6.setButtonText("vi");
+                chordButton7.setButtonText("vii");
+                break;
+            case (MelodicMajorModes::mixolydian):
+                chordButton1.setButtonText("I");
+                chordButton2.setButtonText("ii");
+                chordButton3.setButtonText("iii");
+                chordButton4.setButtonText("IV");
+                chordButton5.setButtonText("v");
+                chordButton6.setButtonText("vi");
+                chordButton7.setButtonText("bVII");
+                break;
+            case (MelodicMajorModes::aeolian):
+                chordButton1.setButtonText("i");
+                chordButton2.setButtonText("ii");
+                chordButton3.setButtonText("bIII");
+                chordButton4.setButtonText("iv");
+                chordButton5.setButtonText("v");
+                chordButton6.setButtonText("bVI");
+                chordButton7.setButtonText("bVII");
+                break;
+            case (MelodicMajorModes::locrian):
+                chordButton1.setButtonText("i");
+                chordButton2.setButtonText("bII");
+                chordButton3.setButtonText("biii");
+                chordButton4.setButtonText("iv");
+                chordButton5.setButtonText("bV");
+                chordButton6.setButtonText("bVI");
+                chordButton7.setButtonText("bvii");
+                break;
+        }
+    }
+    
+    
     //==============================================================================
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override
     {
@@ -217,9 +291,6 @@ public:
     TextButton modeButton5 {"mixolydian"};
     TextButton modeButton6 {"aeolian"};
     TextButton modeButton7 {"locrian"};
-    
-    
-
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
