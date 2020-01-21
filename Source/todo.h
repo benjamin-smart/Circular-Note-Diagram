@@ -1,12 +1,8 @@
 /*
  todo:
- - finish getting synth to work
-    - hook up sliders
-    - can we make SynthSectionComponent be an AudioAppComponent and include the audio processing in there?
- - get synth to play notes of chords that are displayed on screen
-    - 3 separate synths needed for root third and fifth, different voices are used for harmonics
-    - array of midi notes?  how do we wanna do this?  how are they being triggered?  MainComponent is sending stream of noteOn messages from currently selected Nodes?  I dont know!  Let's find out!
-
+ - harmonic synths for third and fifth
+ - octave toggle
+ 
  
  - rotate nodes slider changes master tuning from 220 hz to 880 hz
  - distance from centre slider is volume slider
@@ -37,6 +33,13 @@
   
  
  done:
+ - finish getting synth to work
+    - hook up sliders
+    - can we make SynthSectionComponent be an AudioAppComponent and include the audio processing in there?
+ - get synth to play notes of chords that are displayed on screen
+    - 3 separate synths needed for root third and fifth, different voices are used for harmonics
+    - array of midi notes?  how do we wanna do this?  how are they being triggered?
+ 
 - make paths generate from selected scale/mode
  - create scale concept
  - refactor circle display into it's own cpp file
