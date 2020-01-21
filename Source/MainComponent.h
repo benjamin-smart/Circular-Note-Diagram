@@ -25,8 +25,8 @@ public:
         setSize (1600, 1200);
         setAudioChannels(0, 2);
         
-        
         circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::ionian);
+        circleDiagram.setNodePath(chordState);
         
         addAndMakeVisible(circleDiagram);
         addAndMakeVisible(distanceFromCentreSlider);
@@ -58,7 +58,7 @@ public:
         playbackSectionDummyLabel.setColour(0x1000282, Colours::maroon);    // outline colour ID
         
         distanceFromCentreSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
-        distanceFromCentreSlider.setRange(0.4f, 0.9f);
+        distanceFromCentreSlider.setRange(0.0f, 0.9f);
         distanceFromCentreSlider.setValue(0.9f);
         distanceFromCentreSlider.onValueChange = [this]{ circleDiagram.setDistanceFromCentre((float)distanceFromCentreSlider.getValue()); };
         distanceFromCentreSlider.setNumDecimalPlacesToDisplay(2);
@@ -69,27 +69,6 @@ public:
         rotateNodesSlider.onValueChange = [this]{ circleDiagram.rotateNodes(rotateNodesSlider.getValue()); };
         rotateNodesSlider.setNumDecimalPlacesToDisplay(2);
         
-        chordButton1.setRadioGroupId(1);
-        chordButton2.setRadioGroupId(1);
-        chordButton3.setRadioGroupId(1);
-        chordButton4.setRadioGroupId(1);
-        chordButton5.setRadioGroupId(1);
-        chordButton6.setRadioGroupId(1);
-        chordButton7.setRadioGroupId(1);
-        chordButton1.setToggleState(true,  dontSendNotification);
-        chordButton2.setToggleState(false, dontSendNotification);
-        chordButton3.setToggleState(false, dontSendNotification);
-        chordButton4.setToggleState(false, dontSendNotification);
-        chordButton5.setToggleState(false, dontSendNotification);
-        chordButton6.setToggleState(false, dontSendNotification);
-        chordButton7.setToggleState(false, dontSendNotification);
-        chordButton1.onClick = [this] { chordButton1.setToggleState(true, dontSendNotification); circleDiagram.setNodePath(1); };
-        chordButton2.onClick = [this] { chordButton2.setToggleState(true, dontSendNotification); circleDiagram.setNodePath(2); };
-        chordButton3.onClick = [this] { chordButton3.setToggleState(true, dontSendNotification); circleDiagram.setNodePath(3); };
-        chordButton4.onClick = [this] { chordButton4.setToggleState(true, dontSendNotification); circleDiagram.setNodePath(4); };
-        chordButton5.onClick = [this] { chordButton5.setToggleState(true, dontSendNotification); circleDiagram.setNodePath(5); };
-        chordButton6.onClick = [this] { chordButton6.setToggleState(true, dontSendNotification); circleDiagram.setNodePath(6); };
-        chordButton7.onClick = [this] { chordButton7.setToggleState(true, dontSendNotification); circleDiagram.setNodePath(7); };
         
         modeButton1.setRadioGroupId(2);
         modeButton2.setRadioGroupId(2);
@@ -105,17 +84,53 @@ public:
         modeButton5.setToggleState(false, dontSendNotification);
         modeButton6.setToggleState(false, dontSendNotification);
         modeButton7.setToggleState(false, dontSendNotification);
-        modeButton1.onClick = [this] { modeButton1.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::ionian); };
-        modeButton2.onClick = [this] { modeButton2.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::dorian); };
-        modeButton3.onClick = [this] { modeButton3.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::phrygian); };
-        modeButton4.onClick = [this] { modeButton4.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::lydian); };
-        modeButton5.onClick = [this] { modeButton5.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::mixolydian); };
-        modeButton6.onClick = [this] { modeButton6.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::aeolian); };
-        modeButton7.onClick = [this] { modeButton7.setToggleState(true, dontSendNotification); circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::locrian); };
+        modeButton1.onClick = [this] { modeButton1.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::ionian); };
+        modeButton2.onClick = [this] { modeButton2.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::dorian); };
+        modeButton3.onClick = [this] { modeButton3.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::phrygian); };
+        modeButton4.onClick = [this] { modeButton4.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::lydian); };
+        modeButton5.onClick = [this] { modeButton5.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::mixolydian); };
+        modeButton6.onClick = [this] { modeButton6.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::aeolian); };
+        modeButton7.onClick = [this] { modeButton7.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::locrian); };
+        
+        chordButton1.setRadioGroupId(1);
+        chordButton2.setRadioGroupId(1);
+        chordButton3.setRadioGroupId(1);
+        chordButton4.setRadioGroupId(1);
+        chordButton5.setRadioGroupId(1);
+        chordButton6.setRadioGroupId(1);
+        chordButton7.setRadioGroupId(1);
+        chordButton1.setToggleState(true,  dontSendNotification);
+        chordButton2.setToggleState(false, dontSendNotification);
+        chordButton3.setToggleState(false, dontSendNotification);
+        chordButton4.setToggleState(false, dontSendNotification);
+        chordButton5.setToggleState(false, dontSendNotification);
+        chordButton6.setToggleState(false, dontSendNotification);
+        chordButton7.setToggleState(false, dontSendNotification);
+        chordButton1.onClick = [this] { chordButton1.setToggleState(true, dontSendNotification); chordButtonClicked(1); };
+        chordButton2.onClick = [this] { chordButton2.setToggleState(true, dontSendNotification); chordButtonClicked(2); };
+        chordButton3.onClick = [this] { chordButton3.setToggleState(true, dontSendNotification); chordButtonClicked(3); };
+        chordButton4.onClick = [this] { chordButton4.setToggleState(true, dontSendNotification); chordButtonClicked(4); };
+        chordButton5.onClick = [this] { chordButton5.setToggleState(true, dontSendNotification); chordButtonClicked(5); };
+        chordButton6.onClick = [this] { chordButton6.setToggleState(true, dontSendNotification); chordButtonClicked(6); };
+        chordButton7.onClick = [this] { chordButton7.setToggleState(true, dontSendNotification); chordButtonClicked(7); };
     }
 
     ~MainComponent() { shutdownAudio(); }
 
+    //==============================================================================
+    void modeButtonClicked(MelodicMajorModes requestedMode)
+    {
+        modeState = requestedMode;
+        circleDiagram.setNodesDiatonicToMode(modeState);
+        synthAudioSource.updateSynthMidiNoteState(modeState, chordState);
+    }
+    
+    void chordButtonClicked(int chordNumber) // 1-7, diatonic to current mode
+    {
+        chordState = chordNumber;
+        circleDiagram.setNodePath(chordNumber);
+        synthAudioSource.updateSynthMidiNoteState(modeState, chordState);
+    }
     //==============================================================================
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override
     {
@@ -123,14 +138,12 @@ public:
     }
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
     {
-        bufferToFill.clearActiveBufferRegion();
+//        bufferToFill.clearActiveBufferRegion();
+
         synthAudioSource.getNextAudioBlock(bufferToFill);
     }
-    void releaseResources()                                             override
-    {
-        
-    }
-
+    void releaseResources() override { }
+    
 //==============================================================================
     void paint (Graphics& g) override {}
 
@@ -177,10 +190,17 @@ public:
     }
     
 //==============================================================================
-    CircleDiagramComponent circleDiagram;
+public:
+    MelodicMajorModes modeState = MelodicMajorModes::ionian;
+    unsigned int chordState = 1;
     
+    CircleDiagramComponent circleDiagram;
     Slider distanceFromCentreSlider;
     Slider rotateNodesSlider;
+    
+    SynthSectionComponent synthSection;
+    SynthAudioSource      synthAudioSource;
+    Label playbackSectionDummyLabel;
     
     TextButton chordButton1 {"I"};
     TextButton chordButton2 {"ii"};
@@ -198,9 +218,8 @@ public:
     TextButton modeButton6 {"aeolian"};
     TextButton modeButton7 {"locrian"};
     
-    SynthSectionComponent synthSection;
-    SynthAudioSource      synthAudioSource;
-    Label playbackSectionDummyLabel;
+    
+
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

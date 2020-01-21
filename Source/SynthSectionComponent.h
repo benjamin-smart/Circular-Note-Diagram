@@ -10,6 +10,7 @@
 
 #pragma once
 #include "../JuceLibraryCode/JuceHeader.h"
+//#include <array>
 
 
 //==============================================================================
@@ -61,9 +62,6 @@ public:
         
         return currentSample;
     }
-    
-    
-    
 
 private:
     const AudioSampleBuffer& wavetable;
@@ -83,28 +81,29 @@ public:
 //==============================================================================
     void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override
     {
-        auto midiNote = 42;  // todo: midi input from circleDiagram
+        synthSampleRate = sampleRate;
         
         auto* rootOscillator = new WavetableOscillator(sineTable);
-        auto frequencyOfRoot = 440.0 * pow(2.0, (midiNote - 69) / 12.0);
-        rootOscillator->setFrequency(frequencyOfRoot, sampleRate);
-        rootOscillator->setOscillatorGain(1.0f);
-        
         auto* firstHarmonicOscillator = new WavetableOscillator(sineTable);
-        firstHarmonicOscillator ->setFrequency(frequencyOfRoot * 2, sampleRate);
-        firstHarmonicOscillator ->setOscillatorGain(8.0f);
         auto* secondHarmonicOscillator = new WavetableOscillator(sineTable);
-        secondHarmonicOscillator->setFrequency(frequencyOfRoot * 3, sampleRate);
-        secondHarmonicOscillator ->setOscillatorGain(6.0f);
         auto* thirdHarmonicOscillator = new WavetableOscillator(sineTable);
-        thirdHarmonicOscillator ->setFrequency(frequencyOfRoot * 4, sampleRate);
-        thirdHarmonicOscillator ->setOscillatorGain(5.0f);
         auto* fourthHarmonicOscillator = new WavetableOscillator(sineTable);
-        fourthHarmonicOscillator->setFrequency(frequencyOfRoot * 5, sampleRate);
-        fourthHarmonicOscillator ->setOscillatorGain(3.0f);
         auto* fifthHarmonicOscillator = new WavetableOscillator(sineTable);
-        fifthHarmonicOscillator ->setFrequency(frequencyOfRoot * 6, sampleRate);
-        fifthHarmonicOscillator ->setOscillatorGain(1.0f);
+        
+        auto frequencyOfRoot = 440.0 * pow(2.0, (midiNote - 69) / 12.0);
+        rootOscillator->setFrequency(frequencyOfRoot, synthSampleRate);
+        firstHarmonicOscillator ->setFrequency(frequencyOfRoot * 2, synthSampleRate);
+        secondHarmonicOscillator->setFrequency(frequencyOfRoot * 3, synthSampleRate);
+        thirdHarmonicOscillator ->setFrequency(frequencyOfRoot * 4, synthSampleRate);
+        fourthHarmonicOscillator->setFrequency(frequencyOfRoot * 5, synthSampleRate);
+        fifthHarmonicOscillator ->setFrequency(frequencyOfRoot * 6, synthSampleRate);
+        
+        rootOscillator->setOscillatorGain(1.0f);
+        firstHarmonicOscillator ->setOscillatorGain(0.0f);
+        secondHarmonicOscillator->setOscillatorGain(0.0f);
+        thirdHarmonicOscillator ->setOscillatorGain(0.0f);
+        fourthHarmonicOscillator->setOscillatorGain(0.0f);
+        fifthHarmonicOscillator ->setOscillatorGain(0.0f);
         
         oscillators.add(rootOscillator);
         oscillators.add(firstHarmonicOscillator);
@@ -113,16 +112,14 @@ public:
         oscillators.add(fourthHarmonicOscillator);
         oscillators.add(fifthHarmonicOscillator);
         
-
         level = 0.25f / oscillators.size();
     }
     
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
     {
+//        bufferToFill.clearActiveBufferRegion();
         auto* leftBuffer = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
         auto* rightBuffer = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
-        
-//        bufferToFill.clearActiveBufferRegion();
         
         for (auto oscillatorIndex = 0; oscillatorIndex < oscillators.size(); ++oscillatorIndex)
         {
@@ -139,11 +136,8 @@ public:
         }
     }
     
-    void releaseResources() override
-    {
-        
-    }
-    
+    void releaseResources() override {}
+
 //==============================================================================
     void createWavetable()
     {
@@ -159,12 +153,73 @@ public:
             currentAngle += angleDelta;
         }
     }
+    void updateLevel(float newLevel)
+    {
+        level = newLevel;
+    }
     
+    void setSynthFrequency(int requestedMidiNote)
+    {
+        auto requestedFrequency = 440.0 * pow(2.0, (requestedMidiNote - 69) / 12.0);
+        for (int i = 0; i < oscillators.size(); ++i)
+        {
+            auto* oscillator = oscillators.getUnchecked(i);
+            oscillator->setFrequency(requestedFrequency, synthSampleRate);
+        }
+    }
+    
+    
+    void updateSynthMidiNoteState(MelodicMajorModes currentMode, int currentChord)
+    {
+        switch (currentMode)
+        {
+            case (MelodicMajorModes::ionian): // can i wrap this current chord variable around 7 and do math on it to get the sequences?
+                midiNote = ionianMidiNotes[currentChord-1];
+                break;
+            case (MelodicMajorModes::dorian):
+                midiNote = dorianMidiNotes[currentChord-1];
+                break;
+            case (MelodicMajorModes::phrygian):
+                midiNote = phrygianMidiNotes[currentChord-1];
+                break;
+            case (MelodicMajorModes::lydian):
+                midiNote = lydianMidiNotes[currentChord-1];
+                break;
+            case (MelodicMajorModes::mixolydian):
+                midiNote = mixolydianMidiNotes[currentChord-1];
+                break;
+            case (MelodicMajorModes::aeolian):
+                midiNote = aeolianMidiNotes[currentChord-1];
+                break;
+            case (MelodicMajorModes::locrian):
+                midiNote = locrianMidiNotes[currentChord-1];
+                break;
+        }
+        setSynthFrequency(midiNote);
+    }
+    
+//==============================================================================
+public:
+    const std::array<int, 7> ionianMidiNotes      = { 48, 50, 52, 53, 55, 57, 59 }; // can i put this all somewhere else...?
+    const std::array<int, 7> dorianMidiNotes      = { 48, 50, 51, 53, 55, 57, 58 };
+    const std::array<int, 7> phrygianMidiNotes    = { 48, 49, 51, 53, 55, 56, 58 };
+    const std::array<int, 7> lydianMidiNotes      = { 48, 50, 52, 53, 55, 57, 59 };
+    const std::array<int, 7> mixolydianMidiNotes  = { 48, 50, 52, 53, 55, 57, 58 };
+    const std::array<int, 7> aeolianMidiNotes     = { 48, 50, 51, 53, 55, 56, 58 };
+    const std::array<int, 7> locrianMidiNotes     = { 48, 49, 51, 53, 54, 56, 58 };
+
+
 private:
     const unsigned int tableSize = 1 << 7; // 128
     AudioSampleBuffer sineTable;
     OwnedArray<WavetableOscillator> oscillators;
-    float level = 0.0f;
+    double synthSampleRate;
+    float level;
+    
+    int midiNote = 48;
+    
+//==============================================================================
+
 };
 
 
@@ -219,15 +274,12 @@ public:
 //==============================================================================
     void paint (Graphics& g) override
     {
-        g.fillAll (Colours::darkgrey);   // clear the background
-
+        g.fillAll (Colours::darkgrey);
         g.setColour (Colours::maroon);
-        g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
+        g.drawRect (getLocalBounds(), 1);
         g.setColour (Colours::lightgrey);
         g.setFont (28.0f);
-        g.drawText ("synth section", getLocalBounds().removeFromBottom(getHeight()/2),
-                    Justification::centred, true);   // draw some placeholder text
+        g.drawText ("synth section", getLocalBounds().removeFromBottom(getHeight()/2), Justification::centred, true);
     }
 
     void resized() override
@@ -243,24 +295,10 @@ public:
         synthSectionFlexBox.justifyContent = FlexBox::JustifyContent::spaceBetween;
         synthSectionFlexBox.performLayout(harmonicSlidersBounds);
     }
-    
-//==============================================================================
-//    void prepareToPlay(int samplesPerBlockExpected, float sampleRate)
-//    {
-//
-//    }
-//    void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
-//    {
-//        synthAudioSource.getNextAudioBlock(bufferToFill);
-//    }
-    
-    
-    
 //==============================================================================
 public:
 //    SynthAudioSource synthAudioSource;
 private:
-    
     Slider rootOscillatorGainSlider;
     Slider firstHarmonicGainSlider;
     Slider secondHarmonicGainSlider;

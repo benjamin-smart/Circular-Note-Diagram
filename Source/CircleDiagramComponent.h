@@ -149,7 +149,7 @@ public:
     }
     
 //==============================================================================
-    void setNodePath(int newPath) // finds the selected chord based on the diatonic nodes in the current scale
+    void setNodePath(int newPath) //finds the selected chord based on the diatonic nodes in the current scale.  called by setNodesDiatonicToScale.
     {
 
         
@@ -202,7 +202,7 @@ public:
     }
     
 //==============================================================================
-    void setNodesDiatonicToMode(MelodicMajorModes modeToSet) // the boolean is redundant at this point, but I'm hoping to use it for midi...
+    void setNodesDiatonicToMode(MelodicMajorModes modeToSet) // calls setNodePath
     {
         if (modeToSet == MelodicMajorModes::ionian)
         {
