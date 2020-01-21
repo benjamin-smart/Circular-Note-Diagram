@@ -63,7 +63,6 @@ private:
     float currentIndex = 0.0f, tableDelta = 0.0f, oscillatorGain = 0.0f;
 };
 
-
 //==============================================================================
 class SynthAudioSource : public AudioSource
 {
@@ -124,7 +123,7 @@ public:
 //        auto oscillatorThirdGain = oscillatorThird->getOscillatorGain();
         auto* oscillatorFifth = oscillatorsFifth.getUnchecked(0);
 //        auto oscillatorFifthGain = oscillatorFifth->getOscillatorGain();
-//
+
         for (auto sampleIndex = 0; sampleIndex < bufferToFill.numSamples; ++sampleIndex)
         {
             auto levelSampleThird = oscillatorThird->getNextSample() * level;
