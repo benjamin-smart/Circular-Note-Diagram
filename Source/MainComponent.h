@@ -121,16 +121,18 @@ public:
     {
         modeState = requestedMode;
         circleDiagram.setNodesDiatonicToMode(modeState);
-        synthSection.synthAudioSource.updateSynthMidiNoteState(modeState, chordState);
+//        synthSection.synthAudioSource.updateSynthMidiNoteState(modeState, chordState);
+        synthSection.synthAudioSource.updateSynthMidiMode(modeState);
         updateChordButtonText();
-
     }
     
     void chordButtonClicked(int chordNumber) // 1-7, diatonic to current mode
     {
         chordState = chordNumber;
         circleDiagram.setNodePath(chordNumber);
-        synthSection.synthAudioSource.updateSynthMidiNoteState(modeState, chordState);
+//        synthSection.synthAudioSource.updateSynthMidiNoteState(modeState, chordState);
+
+        synthSection.synthAudioSource.updateSynthMidiChord(chordState);
     }
     
     void updateChordButtonText()
