@@ -41,19 +41,16 @@ public:
     {
         auto tableSize = wavetable.getNumSamples();
         
-        // casting to unsigned int truncates the difference between our actual index and the closest sample,
-        // allowing us to find the needed amount to interpolate between index0 and index1
         auto index0 = (unsigned int) currentIndex;
         auto index1 = index0 == (tableSize - 1) ? (unsigned int) 0 : index0 + 1; // if (index0 == 127) set to 0, else set to index0+1
         
-        auto frac = currentIndex - (float) index0; // distance we have passed through current sample from 0.0f - 1.0f
+        auto frac = currentIndex - (float) index0;
         
-        // now get the actual sample values to interpolate between...
         auto* table = wavetable.getReadPointer(0);
         auto value0 = table[index0];
         auto value1 = table[index1];
         
-        auto currentSample = value0 + frac * (value1 - value0); // interpolate between the values.
+        auto currentSample = value0 + frac * (value1 - value0); // interpolate between the values...
         
         if ((currentIndex += tableDelta) > tableSize)
             currentIndex -= tableSize;
@@ -76,7 +73,6 @@ public:
         createWavetable();
     }
     
-//==============================================================================
     void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override
     {
         synthSampleRate = sampleRate;
@@ -88,34 +84,19 @@ public:
         auto* fourthHarmonicOscillator = new WavetableOscillator(sineTable);
         auto* fifthHarmonicOscillator = new WavetableOscillator(sineTable);
         
-        auto frequencyOfRoot = 440.0 * pow(2.0, (midiNote - 69) / 12.0);
-        rootOscillator->setFrequency(frequencyOfRoot, synthSampleRate);
-        firstHarmonicOscillator ->setFrequency(frequencyOfRoot * 2, synthSampleRate);
-        secondHarmonicOscillator->setFrequency(frequencyOfRoot * 3, synthSampleRate);
-        thirdHarmonicOscillator ->setFrequency(frequencyOfRoot * 4, synthSampleRate);
-        fourthHarmonicOscillator->setFrequency(frequencyOfRoot * 5, synthSampleRate);
-        fifthHarmonicOscillator ->setFrequency(frequencyOfRoot * 6, synthSampleRate);
-        
-        rootOscillator->setOscillatorGain(1.0f);
-        firstHarmonicOscillator ->setOscillatorGain(0.0f);
-        secondHarmonicOscillator->setOscillatorGain(0.0f);
-        thirdHarmonicOscillator ->setOscillatorGain(0.0f);
-        fourthHarmonicOscillator->setOscillatorGain(0.0f);
-        fifthHarmonicOscillator ->setOscillatorGain(0.0f);
-        
         oscillators.add(rootOscillator);
         oscillators.add(firstHarmonicOscillator);
         oscillators.add(secondHarmonicOscillator);
         oscillators.add(thirdHarmonicOscillator);
         oscillators.add(fourthHarmonicOscillator);
         oscillators.add(fifthHarmonicOscillator);
-        
+
         level = 0.25f / oscillators.size();
+        setSynthFrequency(midiNote);
     }
     
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
     {
-//        bufferToFill.clearActiveBufferRegion();
         auto* leftBuffer = bufferToFill.buffer->getWritePointer(0, bufferToFill.startSample);
         auto* rightBuffer = bufferToFill.buffer->getWritePointer(1, bufferToFill.startSample);
         
@@ -135,7 +116,7 @@ public:
     }
     
     void releaseResources() override {}
-
+    
 //==============================================================================
     void createWavetable()
     {
@@ -162,7 +143,16 @@ public:
         for (int i = 0; i < oscillators.size(); ++i)
         {
             auto* oscillator = oscillators.getUnchecked(i);
-            oscillator->setFrequency(requestedFrequency, synthSampleRate);
+            oscillator->setFrequency(requestedFrequency * (i + 1), synthSampleRate);
+        }
+    }
+    
+    void setOscillatorGainByIndex(int uncheckedOscillatorIndex, float gainToSet)
+    {
+        if (uncheckedOscillatorIndex < (oscillators.size() - 1) )
+        {
+            auto* oscillator = oscillators.getUnchecked(uncheckedOscillatorIndex);
+            oscillator->setOscillatorGain(gainToSet);
         }
     }
     
@@ -200,12 +190,13 @@ private:
     const unsigned int tableSize = 1 << 7; // 128
     AudioSampleBuffer sineTable;
     OwnedArray<WavetableOscillator> oscillators;
+    
     double synthSampleRate;
     float level;
-
+    
     int midiNote = 48;
 
-    const std::array<int, 7> ionianMidiNotes      = { 48, 50, 52, 53, 55, 57, 59 }; // can i put this all somewhere else...?
+    const std::array<int, 7> ionianMidiNotes      = { 48, 50, 52, 53, 55, 57, 59 };
     const std::array<int, 7> dorianMidiNotes      = { 48, 50, 51, 53, 55, 57, 58 };
     const std::array<int, 7> phrygianMidiNotes    = { 48, 49, 51, 53, 55, 56, 58 };
     const std::array<int, 7> lydianMidiNotes      = { 48, 50, 52, 53, 55, 57, 59 };
@@ -213,7 +204,9 @@ private:
     const std::array<int, 7> aeolianMidiNotes     = { 48, 50, 51, 53, 55, 56, 58 };
     const std::array<int, 7> locrianMidiNotes     = { 48, 49, 51, 53, 54, 56, 58 };
 };
+//==============================================================================
 
+ /* Audio happens above this line */
 
 //==============================================================================
 class SynthSectionComponent    : public Component
@@ -255,12 +248,15 @@ public:
         thirdHarmonicGainSlider .setNumDecimalPlacesToDisplay(2);
         fourthHarmonicGainSlider.setNumDecimalPlacesToDisplay(2);
         fifthHarmonicGainSlider .setNumDecimalPlacesToDisplay(2);
+        
+        rootOscillatorGainSlider.onValueChange = [this] { synthAudioSource.setOscillatorGainByIndex(0, (float)rootOscillatorGainSlider.getValue()); };
+        firstHarmonicGainSlider .onValueChange = [this] { synthAudioSource.setOscillatorGainByIndex(1, (float)firstHarmonicGainSlider .getValue()); };
+        secondHarmonicGainSlider.onValueChange = [this] { synthAudioSource.setOscillatorGainByIndex(2, (float)secondHarmonicGainSlider.getValue()); };
+        thirdHarmonicGainSlider .onValueChange = [this] { synthAudioSource.setOscillatorGainByIndex(3, (float)thirdHarmonicGainSlider .getValue()); };
+        fourthHarmonicGainSlider.onValueChange = [this] { synthAudioSource.setOscillatorGainByIndex(4, (float)fourthHarmonicGainSlider.getValue()); };
+        fifthHarmonicGainSlider .onValueChange = [this] { synthAudioSource.setOscillatorGainByIndex(5, (float)fifthHarmonicGainSlider .getValue()); };
     }
 
-    ~SynthSectionComponent()
-    {
-    }
-    
 //==============================================================================
     void paint (Graphics& g) override
     {
@@ -287,7 +283,7 @@ public:
     }
 //==============================================================================
 public:
-//    SynthAudioSource synthAudioSource;
+    SynthAudioSource synthAudioSource;
 private:
     Slider rootOscillatorGainSlider;
     Slider firstHarmonicGainSlider;

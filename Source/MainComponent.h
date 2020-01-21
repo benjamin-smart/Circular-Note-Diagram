@@ -32,24 +32,7 @@ public:
         addAndMakeVisible(distanceFromCentreSlider);
         addAndMakeVisible(rotateNodesSlider);
         addAndMakeVisible(synthSection);
-        
-        addAndMakeVisible(chordButton1);
-        addAndMakeVisible(chordButton2);
-        addAndMakeVisible(chordButton3);
-        addAndMakeVisible(chordButton4);
-        addAndMakeVisible(chordButton5);
-        addAndMakeVisible(chordButton6);
-        addAndMakeVisible(chordButton7);
-        
-        addAndMakeVisible(modeButton1);
-        addAndMakeVisible(modeButton2);
-        addAndMakeVisible(modeButton3);
-        addAndMakeVisible(modeButton4);
-        addAndMakeVisible(modeButton5);
-        addAndMakeVisible(modeButton6);
-        addAndMakeVisible(modeButton7);
-        
-        
+
         addAndMakeVisible(playbackSectionDummyLabel);
         playbackSectionDummyLabel.setText("Playback Section", dontSendNotification);
         playbackSectionDummyLabel.setJustificationType(Justification::centred);
@@ -68,7 +51,23 @@ public:
         rotateNodesSlider.setValue(MathConstants<float>::halfPi + MathConstants<float>::pi);
         rotateNodesSlider.onValueChange = [this]{ circleDiagram.rotateNodes(rotateNodesSlider.getValue()); };
         rotateNodesSlider.setNumDecimalPlacesToDisplay(2);
-        
+
+        //==============================================================================
+
+        addAndMakeVisible(chordButton1);
+        addAndMakeVisible(chordButton2);
+        addAndMakeVisible(chordButton3);
+        addAndMakeVisible(chordButton4);
+        addAndMakeVisible(chordButton5);
+        addAndMakeVisible(chordButton6);
+        addAndMakeVisible(chordButton7);
+        addAndMakeVisible(modeButton1);
+        addAndMakeVisible(modeButton2);
+        addAndMakeVisible(modeButton3);
+        addAndMakeVisible(modeButton4);
+        addAndMakeVisible(modeButton5);
+        addAndMakeVisible(modeButton6);
+        addAndMakeVisible(modeButton7);
         
         modeButton1.setRadioGroupId(2);
         modeButton2.setRadioGroupId(2);
@@ -84,13 +83,13 @@ public:
         modeButton5.setToggleState(false, dontSendNotification);
         modeButton6.setToggleState(false, dontSendNotification);
         modeButton7.setToggleState(false, dontSendNotification);
-        modeButton1.onClick = [this] { modeButton1.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::ionian); };
-        modeButton2.onClick = [this] { modeButton2.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::dorian); };
-        modeButton3.onClick = [this] { modeButton3.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::phrygian); };
-        modeButton4.onClick = [this] { modeButton4.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::lydian); };
+        modeButton1.onClick = [this] { modeButton1.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::ionian);     };
+        modeButton2.onClick = [this] { modeButton2.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::dorian);     };
+        modeButton3.onClick = [this] { modeButton3.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::phrygian);   };
+        modeButton4.onClick = [this] { modeButton4.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::lydian);     };
         modeButton5.onClick = [this] { modeButton5.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::mixolydian); };
-        modeButton6.onClick = [this] { modeButton6.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::aeolian); };
-        modeButton7.onClick = [this] { modeButton7.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::locrian); };
+        modeButton6.onClick = [this] { modeButton6.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::aeolian);    };
+        modeButton7.onClick = [this] { modeButton7.setToggleState(true, dontSendNotification); modeButtonClicked(MelodicMajorModes::locrian);    };
         
         chordButton1.setRadioGroupId(1);
         chordButton2.setRadioGroupId(1);
@@ -122,7 +121,7 @@ public:
     {
         modeState = requestedMode;
         circleDiagram.setNodesDiatonicToMode(modeState);
-        synthAudioSource.updateSynthMidiNoteState(modeState, chordState);
+        synthSection.synthAudioSource.updateSynthMidiNoteState(modeState, chordState);
         updateChordButtonText();
 
     }
@@ -131,7 +130,7 @@ public:
     {
         chordState = chordNumber;
         circleDiagram.setNodePath(chordNumber);
-        synthAudioSource.updateSynthMidiNoteState(modeState, chordState);
+        synthSection.synthAudioSource.updateSynthMidiNoteState(modeState, chordState);
     }
     
     void updateChordButtonText()
@@ -204,17 +203,15 @@ public:
         }
     }
     
-    
-    //==============================================================================
+//==============================================================================
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override
     {
-        synthAudioSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
+        synthSection.synthAudioSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
     }
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override
     {
-//        bufferToFill.clearActiveBufferRegion();
-
-        synthAudioSource.getNextAudioBlock(bufferToFill);
+        bufferToFill.clearActiveBufferRegion();
+        synthSection.synthAudioSource.getNextAudioBlock(bufferToFill);
     }
     void releaseResources() override { }
     
@@ -260,7 +257,6 @@ public:
         FlexBox playbackSectionFlexBox;
         playbackSectionFlexBox.items.add(FlexItem(380, 580, playbackSectionDummyLabel));
         playbackSectionFlexBox.performLayout(playbackSectionBounds);
-        
     }
     
 //==============================================================================
@@ -273,7 +269,6 @@ public:
     Slider rotateNodesSlider;
     
     SynthSectionComponent synthSection;
-    SynthAudioSource      synthAudioSource;
     Label playbackSectionDummyLabel;
     
     TextButton chordButton1 {"I"};

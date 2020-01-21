@@ -33,14 +33,11 @@ public:
     NodeComponent()
     {
         addAndMakeVisible(noteNameLabel);
-//        addAndMakeVisible(nodeButton);
         noteNameLabel.setColour(0x1000281, Colours::black);
-//        noteNameLabel.setFont(Font::)
     }
     
     void paint (Graphics& g) override
     {
-//        g.setColour(Colours::wheat);
         g.setColour(isDiatonic ? Colours::wheat : Colours::darkgrey);
         Rectangle<float> nodeRect = getLocalBounds().toFloat().reduced(5.0f);
         g.fillEllipse(nodeRect);
@@ -63,8 +60,7 @@ public:
         noteNameLabel.setText(newText, dontSendNotification);
     }
     
-    //==============================================================================
-
+//==============================================================================
 public:
     bool isDiatonic       = false;
     bool isInCurrentChord = false;  // use me to highlight currently playing nodes in scale
@@ -74,8 +70,8 @@ private:
     String noteNameString;
 };
 
-//==============================================================================
 
+//==============================================================================
 class CircleDiagramComponent : public Component
 {
   
