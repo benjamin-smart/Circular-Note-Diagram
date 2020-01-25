@@ -2,6 +2,8 @@
  todo:
  - harmonic synths for third and fifth
  - octave toggle
+ - chord voicing select
+ - parent scale select
  
  
  - rotate nodes slider changes master tuning from 220 hz to 880 hz
