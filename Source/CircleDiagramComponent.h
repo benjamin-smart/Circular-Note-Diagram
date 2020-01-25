@@ -12,19 +12,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include <array>
+#include "SynthSectionComponent.h"
+#include "ScaleData.h"
 
-
-//==============================================================================
-enum class MelodicMajorModes
-{
-    ionian,
-    dorian,
-    phrygian,
-    lydian,
-    mixolydian,
-    aeolian,
-    locrian
-};
 
 //==============================================================================
 class NodeComponent : public Component
@@ -35,7 +25,7 @@ public:
         addAndMakeVisible(noteNameLabel);
         noteNameLabel.setColour(0x1000281, Colours::black);
     }
-    
+
     void paint (Graphics& g) override
     {
         g.setColour(isDiatonic ? Colours::wheat : Colours::darkgrey);
@@ -59,7 +49,6 @@ public:
     {
         noteNameLabel.setText(newText, dontSendNotification);
     }
-    
 //==============================================================================
 public:
     bool isDiatonic       = false;
@@ -91,7 +80,7 @@ public:
         node10.setText(" A");
         node11.setText("A#");
         node12.setText(" B");
-        
+
         addAndMakeVisible(node1);
         addAndMakeVisible(node2);
         addAndMakeVisible(node3);
@@ -129,7 +118,7 @@ public:
         
         // draw circles around path points
         g.setColour(Colours::lightgrey);
-        g.drawEllipse(rootPoint.getX()-25, rootPoint.getY()-25, 50.0f, 50.0f, 4.0f);
+        g.drawEllipse(rootPoint .getX()-25, rootPoint.getY()-25, 50.0f, 50.0f, 4.0f);
         g.setColour(Colours::maroon);
         g.drawEllipse(thirdPoint.getX()-25, thirdPoint.getY()-25, 50.0f, 50.0f, 2.0f);
         g.setColour(Colours::purple);
@@ -145,10 +134,8 @@ public:
     }
     
 //==============================================================================
-    void setNodePath(int newPath) //finds the selected chord based on the diatonic nodes in the current scale.  called by setNodesDiatonicToScale.
+    void setNodePath(int newPath) //finds the selected chord based on the diatonic nodes in the current scale.  called by setNodesDiatonicToMode.
     {
-
-        
         switch (newPath) // chord numbers 1-7 become *diatonic* node indices 0-6 here
         {
             case 1:

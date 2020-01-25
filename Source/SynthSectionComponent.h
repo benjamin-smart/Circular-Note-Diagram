@@ -7,9 +7,14 @@
 
   ==============================================================================
 */
+// key value pair - mode to all the mode data
+
 
 #pragma once
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "SynthSectionComponent.h"
+#include "ScaleData.h"
+
 
 //==============================================================================
 class WavetableOscillator
@@ -182,13 +187,12 @@ public:
     
     void setOscillatorGainByIndex(int uncheckedOscillatorIndex, float gainToSet)
     {
-        if (uncheckedOscillatorIndex < (oscillators.size() - 1) )
+//        if (uncheckedOscillatorIndex < (oscillators.size() - 1) )
         {
             auto* oscillator = oscillators.getUnchecked(uncheckedOscillatorIndex);
             oscillator->setOscillatorGain(gainToSet);
         }
     }
-    
 
     void setThirdLevel(float levelToSet)
     {
@@ -198,7 +202,7 @@ public:
     {
         levelFifth = levelToSet;
     }
-    
+
     void updateSynthMidiNoteState(MelodicMajorModes currentMode, int currentChord)
     {
         switch (currentMode)
@@ -227,7 +231,7 @@ public:
         }
         setSynthFrequency(midiNote, midiNoteThird, midiNoteFifth);
     }
-    
+
     void updateSynthMidiMode(MelodicMajorModes newMode)
     {
         switch (newMode)
@@ -259,6 +263,45 @@ public:
     
     void updateSynthMidiChord(int newChord)
     {
+//        switch (newChord)   //this is compressed within one octave - revised switch statement below gives us root position triads up through the second octave.
+//        {
+//            case (1):
+//                midiNote      = currentMidiNotes[0];
+//                midiNoteThird = currentMidiNotes[2];
+//                midiNoteFifth = currentMidiNotes[4];
+//                break;
+//            case (2):
+//                midiNote      = currentMidiNotes[1];
+//                midiNoteThird = currentMidiNotes[3];
+//                midiNoteFifth = currentMidiNotes[5];
+//                break;
+//            case (3):
+//                midiNote      = currentMidiNotes[2];
+//                midiNoteThird = currentMidiNotes[4];
+//                midiNoteFifth = currentMidiNotes[6];
+//                break;
+//            case (4):
+//                midiNote      = currentMidiNotes[3];
+//                midiNoteThird = currentMidiNotes[5];
+//                midiNoteFifth = currentMidiNotes[0];
+//                break;
+//            case (5):
+//                midiNote      = currentMidiNotes[4];
+//                midiNoteThird = currentMidiNotes[6];
+//                midiNoteFifth = currentMidiNotes[1];
+//                break;
+//            case (6):
+//                midiNote      = currentMidiNotes[5];
+//                midiNoteThird = currentMidiNotes[0];
+//                midiNoteFifth = currentMidiNotes[2];
+//                break;
+//            case (7):
+//                midiNote      = currentMidiNotes[6];
+//                midiNoteThird = currentMidiNotes[1];
+//                midiNoteFifth = currentMidiNotes[3];
+//                break;
+//        }
+        
         switch (newChord)
         {
             case (1):
@@ -279,22 +322,22 @@ public:
             case (4):
                 midiNote      = currentMidiNotes[3];
                 midiNoteThird = currentMidiNotes[5];
-                midiNoteFifth = currentMidiNotes[0];
+                midiNoteFifth = currentMidiNotes[7];
                 break;
             case (5):
                 midiNote      = currentMidiNotes[4];
                 midiNoteThird = currentMidiNotes[6];
-                midiNoteFifth = currentMidiNotes[1];
+                midiNoteFifth = currentMidiNotes[8];
                 break;
             case (6):
                 midiNote      = currentMidiNotes[5];
-                midiNoteThird = currentMidiNotes[0];
-                midiNoteFifth = currentMidiNotes[2];
+                midiNoteThird = currentMidiNotes[7];
+                midiNoteFifth = currentMidiNotes[9];
                 break;
             case (7):
                 midiNote      = currentMidiNotes[6];
-                midiNoteThird = currentMidiNotes[1];
-                midiNoteFifth = currentMidiNotes[3];
+                midiNoteThird = currentMidiNotes[8];
+                midiNoteFifth = currentMidiNotes[10];
                 break;
         }
         currentChord = newChord;
@@ -323,14 +366,14 @@ private:
 //    int midiNoteNinth;
     
     
-    std::array<int, 7>       currentMidiNotes     = { 0,  0,  0,  0,  0,  0,  0, };
-    const std::array<int, 7> ionianMidiNotes      = { 48, 50, 52, 53, 55, 57, 59 };
-    const std::array<int, 7> dorianMidiNotes      = { 48, 50, 51, 53, 55, 57, 58 };
-    const std::array<int, 7> phrygianMidiNotes    = { 48, 49, 51, 53, 55, 56, 58 };
-    const std::array<int, 7> lydianMidiNotes      = { 48, 50, 52, 53, 55, 57, 59 };
-    const std::array<int, 7> mixolydianMidiNotes  = { 48, 50, 52, 53, 55, 57, 58 };
-    const std::array<int, 7> aeolianMidiNotes     = { 48, 50, 51, 53, 55, 56, 58 };
-    const std::array<int, 7> locrianMidiNotes     = { 48, 49, 51, 53, 54, 56, 58 };
+    std::array<int, 15>       currentMidiNotes     = { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0  };
+    const std::array<int, 15> ionianMidiNotes      = { 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72 };
+    const std::array<int, 15> dorianMidiNotes      = { 48, 50, 51, 53, 55, 57, 58, 60, 62, 63, 65, 67, 69, 70, 72 };
+    const std::array<int, 15> phrygianMidiNotes    = { 48, 49, 51, 53, 55, 56, 58, 60, 61, 63, 65, 67, 68, 70, 72 };
+    const std::array<int, 15> lydianMidiNotes      = { 48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 66, 67, 69, 71, 72 };
+    const std::array<int, 15> mixolydianMidiNotes  = { 48, 50, 52, 53, 55, 57, 58, 60, 62, 64, 65, 67, 69, 70, 72 };
+    const std::array<int, 15> aeolianMidiNotes     = { 48, 50, 51, 53, 55, 56, 58, 60, 62, 63, 65, 67, 68, 70, 72 };
+    const std::array<int, 15> locrianMidiNotes     = { 48, 49, 51, 53, 54, 56, 58, 60, 61, 63, 65, 66, 68, 70, 72 };
 };
 //==============================================================================
 
@@ -371,7 +414,7 @@ public:
         fourthHarmonicGainSlider.setRange(0.0f, 0.7f);
         fifthHarmonicGainSlider .setRange(0.0f, 0.6f);
         
-        fundamentalOscillatorGainSlider.setValue(1.0f);
+        fundamentalOscillatorGainSlider.setValue(0.0f);
         firstHarmonicGainSlider .setValue(0.0f);
         secondHarmonicGainSlider.setValue(0.0f);
         thirdHarmonicGainSlider .setValue(0.0f);
@@ -408,7 +451,7 @@ public:
         g.drawRect (getLocalBounds(), 1);
         g.setColour (Colours::lightgrey);
         g.setFont (28.0f);
-        g.drawText ("synth section", getLocalBounds().removeFromBottom(getHeight()/2), Justification::centred, true);
+//        g.drawText ("synth section", getLocalBounds().removeFromBottom(getHeight()/2), Justification::centred, true);
     }
 
     void resized() override

@@ -8,11 +8,12 @@
   ==============================================================================
 */
 
-
 #pragma once
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "CircleDiagramComponent.h"
 #include "SynthSectionComponent.h"
+#include "ScaleData.h"
+#include "PlaybackSectionComponent.h"
 
 //==============================================================================
 
@@ -24,21 +25,16 @@ public:
     {
         setSize (1600, 1200);
         setAudioChannels(0, 2);
-        
+
         circleDiagram.setNodesDiatonicToMode(MelodicMajorModes::ionian);
         circleDiagram.setNodePath(chordState);
-        
+
         addAndMakeVisible(circleDiagram);
         addAndMakeVisible(distanceFromCentreSlider);
         addAndMakeVisible(rotateNodesSlider);
+        
         addAndMakeVisible(synthSection);
-
-        addAndMakeVisible(playbackSectionDummyLabel);
-        playbackSectionDummyLabel.setText("Playback Section", dontSendNotification);
-        playbackSectionDummyLabel.setJustificationType(Justification::centred);
-        playbackSectionDummyLabel.setColour(0x1000280, Colours::darkgrey);  // background colour ID
-        playbackSectionDummyLabel.setColour(0x1000281, Colours::lightgrey); // text colour ID
-        playbackSectionDummyLabel.setColour(0x1000282, Colours::maroon);    // outline colour ID
+        addAndMakeVisible(playbackSection);
         
         distanceFromCentreSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
         distanceFromCentreSlider.setRange(0.0f, 0.9f);
@@ -204,7 +200,7 @@ public:
                 break;
         }
     }
-    
+
 //==============================================================================
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override
     {
@@ -237,7 +233,7 @@ public:
         chordButtonsFlexBox.items.add(FlexItem(80, 80, chordButton7));
         chordButtonsFlexBox.justifyContent = FlexBox::JustifyContent::spaceBetween;
         chordButtonsFlexBox.performLayout(chordButtonsBounds);
-        
+
         Rectangle<int> modeButtonsBounds = Rectangle<int>(410, 10, 980, 80);
         FlexBox modeButtonsFlexBox;
         modeButtonsFlexBox.items.add(FlexItem(80, 80, modeButton1));
@@ -257,22 +253,23 @@ public:
 
         Rectangle<int> playbackSectionBounds = Rectangle<int>(10, 610, 380, 580);
         FlexBox playbackSectionFlexBox;
-        playbackSectionFlexBox.items.add(FlexItem(380, 580, playbackSectionDummyLabel));
+        playbackSectionFlexBox.items.add(FlexItem(380, 580, playbackSection));
         playbackSectionFlexBox.performLayout(playbackSectionBounds);
     }
-    
+
 //==============================================================================
 public:
     MelodicMajorModes modeState = MelodicMajorModes::ionian;
     unsigned int chordState = 1;
-    
+
     CircleDiagramComponent circleDiagram;
     Slider distanceFromCentreSlider;
     Slider rotateNodesSlider;
-    
-    SynthSectionComponent synthSection;
-    Label playbackSectionDummyLabel;
-    
+
+    SynthSectionComponent    synthSection;
+    PlaybackSectionComponent playbackSection;
+//    Label playbackSectionDummyLabel;
+
     TextButton chordButton1 {"I"};
     TextButton chordButton2 {"ii"};
     TextButton chordButton3 {"iii"};
@@ -280,7 +277,7 @@ public:
     TextButton chordButton5 {"V"};
     TextButton chordButton6 {"vi"};
     TextButton chordButton7 {"vii"};
-    
+
     TextButton modeButton1 {"ionian"};
     TextButton modeButton2 {"dorian"};
     TextButton modeButton3 {"phrygian"};
@@ -288,6 +285,6 @@ public:
     TextButton modeButton5 {"mixolydian"};
     TextButton modeButton6 {"aeolian"};
     TextButton modeButton7 {"locrian"};
-    
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
